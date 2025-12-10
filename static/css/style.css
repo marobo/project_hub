@@ -83,6 +83,23 @@ ul {
     letter-spacing: -0.5px;
 }
 
+.logo img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: var(--transition);
+    margin-right: 10px;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
 .nav-links {
     display: flex;
     gap: 32px;

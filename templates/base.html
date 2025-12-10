@@ -4,7 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Portfolio{% endblock %}</title>
+    <meta name="description" content="Personal website of Onório de Jesus - Web Developer" />
+    <meta name="keywords" content="Onório de Jesus, Web Developer, Portfolio, Website" />
+    <title>{% block title %}Onório de Jesus{% endblock %}</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +20,9 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container nav-content">
-            <a href="{% url 'home' %}" class="logo">Portfolio</a>
+            <a href="{% url 'home' %}" class="logo">
+                <img src="{% static 'img/onorio_dejesus.png' %}" alt="Onório de Jesus">
+            </a>
             <ul class="nav-links">
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -52,7 +60,7 @@
                     </svg>
                 </a>
             </div>
-            <p class="copyright">&copy; 2024 Portfolio. All rights reserved.</p>
+            <p class="copyright">&copy; 2024 Portfolio Website. All rights reserved.</p>
         </div>
     </footer>
 </body>
