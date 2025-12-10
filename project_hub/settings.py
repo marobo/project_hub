@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-o2qa7u+6izck*hevgbw^=4!-605wg(v*0sc5+-j1c+4ss87avu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['onorio.pythonanywhere.com', 'onorio.dev', 'www.onorio.dev', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -117,6 +117,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
