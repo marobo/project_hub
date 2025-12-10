@@ -121,10 +121,6 @@ ul {
     background: linear-gradient(135deg, #f0f9ff 0%, #fafafa 100%);
 }
 
-.hero-content {
-    max-width: 640px;
-}
-
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
