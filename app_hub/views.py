@@ -100,8 +100,14 @@ def home(request):
 @staff_member_required
 def visitor_stats(request):
     """Dashboard for viewing visitor statistics"""
-    today = timezone.now().date()
+    now = timezone.now()
+    today = now.date()
     last_7_days = today - timedelta(days=6)
+    last_5_minutes = now - timedelta(minutes=5)
+
+    # Currently active visitors (last 5 minutes)
+    active_visitors = Visitor.objects.filter(visited_at__gte=last_5_minutes)
+    active_count = active_visitors.values('ip_address').distinct().count()
 
     # Total visitors
     total_visitors = Visitor.objects.count()
@@ -167,6 +173,8 @@ def visitor_stats(request):
     recent_visitors = Visitor.objects.all()[:20]
 
     context = {
+        'active_count': active_count,
+        'active_visitors': active_visitors[:10],
         'total_visitors': total_visitors,
         'today_visitors': today_visitors,
         'unique_today': unique_today,

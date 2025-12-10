@@ -12,6 +12,13 @@
 
         <!-- Stats Cards -->
         <div class="stats-grid">
+            <div class="stat-card stat-card-active">
+                <div class="stat-number">
+                    <span class="pulse-dot"></span>
+                    {{ active_count }}
+                </div>
+                <div class="stat-label">Active Now</div>
+            </div>
             <div class="stat-card">
                 <div class="stat-number">{{ total_visitors }}</div>
                 <div class="stat-label">Total Page Views</div>
@@ -29,6 +36,39 @@
                 <div class="stat-label">Unique Today</div>
             </div>
         </div>
+
+        <!-- Currently Active Visitors -->
+        {% if active_visitors %}
+        <div class="stats-section active-section">
+            <h2><span class="pulse-dot"></span> Currently Active</h2>
+            <div class="active-visitors-list">
+                {% for visitor in active_visitors %}
+                <div class="active-visitor-item">
+                    <div class="active-visitor-info">
+                        <span class="active-visitor-location">
+                            {% if visitor.city and visitor.country %}
+                                {{ visitor.city }}, {{ visitor.country }}
+                            {% elif visitor.country %}
+                                {{ visitor.country }}
+                            {% else %}
+                                {{ visitor.ip_address }}
+                            {% endif %}
+                        </span>
+                        <span class="active-visitor-page">{{ visitor.page }}</span>
+                    </div>
+                    <div class="active-visitor-meta">
+                        <span class="active-visitor-device">
+                            {% if visitor.device_type == 'mobile' %}📱{% elif visitor.device_type == 'tablet' %}📲{% else %}🖥️{% endif %}
+                        </span>
+                        <span class="active-visitor-time">
+                            {{ visitor.visited_at|timesince }} ago
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Charts Row -->
         <div class="stats-row">
@@ -231,6 +271,113 @@
 .stat-label {
     color: var(--color-text-muted);
     font-size: 0.95rem;
+}
+
+/* Active Now Card */
+.stat-card-active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #059669;
+}
+
+.stat-card-active .stat-number {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.stat-card-active .stat-label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Pulse Animation */
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+.stats-section h2 .pulse-dot {
+    background: #10b981;
+    margin-right: 8px;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* Active Visitors Section */
+.active-section {
+    margin-bottom: 32px;
+    border: 1px solid #10b981;
+}
+
+.active-section h2 {
+    display: flex;
+    align-items: center;
+}
+
+.active-visitors-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.active-visitor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--color-bg);
+    border-radius: 8px;
+    border-left: 3px solid #10b981;
+}
+
+.active-visitor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.active-visitor-location {
+    font-weight: 500;
+}
+
+.active-visitor-page {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.active-visitor-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.active-visitor-device {
+    font-size: 1.2rem;
+}
+
+.active-visitor-time {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
 }
 
 .stats-row {
