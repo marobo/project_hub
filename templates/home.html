@@ -10,7 +10,11 @@
             <div class="hero-content">
                 <h1 class="hero-title">Hello, I'm <span class="highlight">Onório de Jesus</span></h1>
                 <p class="hero-subtitle">I code little things that make people smile! 😊</p>
-                <a href="#projects" class="btn btn-primary">View My Projects</a>
+                <a href="#projects" class="scroll-arrow" aria-label="View My Projects">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
@@ -22,6 +26,7 @@
             <div class="projects-grid">
                 {% for project in projects %}
                 <article class="project-card">
+                    <a href="{{ project.link }}" target="_blank" rel="noopener">
                     {% if project.image %}
                     <div class="project-image">
                         <img src="{{ project.image.url }}" alt="{{ project.title }}">
@@ -33,9 +38,12 @@
                         </svg>
                     </div>
                     {% endif %}
+                    </a>
                     <div class="project-content">
-                        <h3 class="project-title">{{ project.title }}</h3>
-                        <p class="project-description">{{ project.description }}</p>
+                        <a href="{{ project.link }}" target="_blank" rel="noopener">
+                            <h3 class="project-title">{{ project.title|truncatechars:50 }}</h3>
+                        </a>
+                        <p class="project-description">{{ project.description|truncatechars:100 }}</p>
                         {% if project.link %}
                         <a href="{{ project.link }}" target="_blank" rel="noopener" class="project-link">
                             View Project
