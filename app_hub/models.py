@@ -29,9 +29,10 @@ class Project(models.Model):
     image = models.ImageField(upload_to='projects/', blank=True, null=True)
     link = models.URLField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['order', '-created_at']
 
     def __str__(self):
         return self.title

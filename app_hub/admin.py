@@ -4,7 +4,7 @@ from .models import Project, Contact, Visitor
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
+    list_display = ['order', 'title', 'created_at']
     search_fields = ['title', 'description']
 
 
