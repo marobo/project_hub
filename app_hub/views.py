@@ -132,7 +132,7 @@ def visitor_stats(request):
 
     # Currently active visitors (last 5 minutes)
     active_visitors = Visitor.objects.filter(visited_at__gte=last_5_minutes)
-    active_count = active_visitors.values('ip_address').distinct().count()
+    active_count = active_visitors.values('ip_address', 'user_agent').distinct().count()
 
     # Total visitors
     total_visitors = Visitor.objects.count()
@@ -143,11 +143,18 @@ def visitor_stats(request):
     # Unique IPs today
     unique_today = (
         Visitor.objects.filter(visited_at__date=today)
-        .values('ip_address').distinct().count()
+        .values('ip_address', 'user_agent')
+        .distinct()
+        .count()
     )
 
     # Unique IPs total
-    unique_total = Visitor.objects.values('ip_address').distinct().count()
+    unique_total = (
+        Visitor.objects
+        .values('ip_address', 'user_agent')
+        .distinct()
+        .count()
+    )
 
     # Visits per day (last 7 days)
     daily_visits = (
