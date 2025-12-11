@@ -8,6 +8,8 @@ from datetime import timedelta
 import requests
 from user_agents import parse as parse_ua
 from .models import Project, Contact, Visitor
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def get_client_ip(request):
@@ -117,6 +119,20 @@ def home(request):
         if name and email and message:
             Contact.objects.create(name=name, email=email, message=message)
             messages.success(request, 'Thank you! Your message has been sent.')
+
+            # new message successfully sent, send a notification to the admin
+            current_url = request.META['HTTP_REFERER']
+            subject = "New Message from {}".format(name)
+            message = (
+                f"{name} has reached out to you via the contact form "
+                f"at this website:\n{current_url}\n\n"
+                f"Message:\n{message}\n\n"
+                f"Email: {email}\n\nThanks!"
+            )
+            send_mail(
+                subject, message, email,
+                [settings.ADMIN_EMAIL], fail_silently=False
+            )
             return redirect('home')
 
     return render(request, 'home.html', {'projects': projects})
