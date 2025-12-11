@@ -58,9 +58,34 @@ def parse_user_agent(ua_string):
 
 
 def track_visitor(request):
-    """Track visitor for the current request"""
+    """Track visitor with session-based deduplication"""
     ip_address = get_client_ip(request)
     ua_string = request.META.get('HTTP_USER_AGENT', '')[:500]
+    page = request.path
+
+    # Session-based deduplication:
+    # Track which pages have been viewed in this session
+    visited_pages = request.session.get('visited_pages', {})
+    current_time = timezone.now()
+
+    # Check if this page was already tracked in this session
+    if page in visited_pages:
+        last_visit_str = visited_pages[page]
+        try:
+            from datetime import datetime
+            last_visit = datetime.fromisoformat(last_visit_str)
+            # Make it timezone-aware if it isn't
+            if timezone.is_naive(last_visit):
+                last_visit = timezone.make_aware(last_visit)
+            # If visited within the last 30 minutes, skip
+            if (current_time - last_visit) < timedelta(minutes=30):
+                return
+        except (ValueError, TypeError):
+            pass  # Invalid timestamp, proceed to track
+
+    # Update session with the current page visit timestamp
+    visited_pages[page] = current_time.isoformat()
+    request.session['visited_pages'] = visited_pages
 
     # Parse user agent
     ua_info = parse_user_agent(ua_string)
@@ -70,7 +95,7 @@ def track_visitor(request):
 
     Visitor.objects.create(
         ip_address=ip_address,
-        page=request.path,
+        page=page,
         user_agent=ua_string,
         browser=ua_info['browser'],
         operating_system=ua_info['operating_system'],
