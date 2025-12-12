@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    container_name: project_hub_web
+    ports:
+      - "8001:8000"   # external 8001 → internal 8000
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: always
