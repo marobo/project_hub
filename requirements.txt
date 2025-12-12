@@ -3,3 +3,5 @@ pillow>=10.0
 user-agents>=2.2
 requests>=2.31
 python-decouple>=3.8
+gunicorn
+whitenoise
