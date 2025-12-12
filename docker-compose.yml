@@ -2,11 +2,22 @@ services:
   web:
     build: .
     container_name: project_hub_web
-    ports:
-      - "8001:8000"   # external 8001 → internal 8000
+    # Remove ports - Traefik handles routing
     volumes:
       - .:/app
       - ./staticfiles:/app/staticfiles
     env_file:
       - .env
     restart: always
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.project_hub.rule=Host(`onorio.dev`)"
+      - "traefik.http.routers.project_hub.entrypoints=websecure"
+      - "traefik.http.routers.project_hub.tls.certresolver=letsencrypt"
+      - "traefik.http.services.project_hub.loadbalancer.server.port=8000"
+
+networks:
+  proxy:
+    external: true
