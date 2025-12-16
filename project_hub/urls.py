@@ -8,5 +8,5 @@ urlpatterns = [
     path('', include('app_hub.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Always serve media files (including production)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
