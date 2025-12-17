@@ -46,8 +46,11 @@ class ContactAdmin(admin.ModelAdmin):
 
 @admin.register(Visitor)
 class VisitorAdmin(admin.ModelAdmin):
-    list_display = ['ip_address', 'page', 'visited_at']
-    list_filter = ['visited_at', 'page']
-    search_fields = ['ip_address', 'page']
-    readonly_fields = ['ip_address', 'page', 'user_agent', 'visited_at']
+    list_display = ['ip_address', 'country', 'city', 'device_type', 'browser', 'visited_at']
+    list_filter = ['visited_at', 'device_type', 'country']
+    search_fields = ['ip_address', 'country', 'city']
+    readonly_fields = [
+        'ip_address', 'user_agent', 'visited_at',
+        'browser', 'operating_system', 'device_type', 'country', 'city'
+    ]
     date_hierarchy = 'visited_at'
