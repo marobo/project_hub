@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.conf import settings
 from .models import Project, Contact
 
@@ -11,25 +11,30 @@ def home(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
-        message = request.POST.get('message')
+        user_message = request.POST.get('message')
 
-        if name and email and message:
-            Contact.objects.create(name=name, email=email, message=message)
+        if name and email and user_message:
+            Contact.objects.create(name=name, email=email, message=user_message)
             messages.success(request, 'Thank you! Your message has been sent.')
 
-            # new message successfully sent, send a notification to the admin
-            current_url = request.META['HTTP_REFERER']
-            subject = "New Message from {}".format(name)
-            message = (
-                f"{name} has reached out to you via the contact form "
-                f"at this website:\n{current_url}\n\n"
-                f"Message:\n{message}\n\n"
-                f"Email: {email}\n\nThanks!"
+            # Send notification email to admin
+            subject = f"New Message from {name}"
+            body = (
+                f"{name} ({email}) sent you a message:\n\n"
+                f"{user_message}"
             )
-            send_mail(
-                subject, message, email,
-                [settings.ADMIN_EMAIL], fail_silently=False
-            )
+            try:
+                mail = EmailMessage(
+                    subject=subject,
+                    body=body,
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[settings.ADMIN_EMAIL],
+                    reply_to=[email],  # Reply goes to the user
+                )
+                mail.send(fail_silently=False)
+            except Exception:
+                pass  # Message saved to DB, email failed silently
+
             return redirect('home')
 
     return render(request, 'home.html', {'projects': projects})
