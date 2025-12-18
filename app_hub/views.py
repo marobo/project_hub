@@ -1,10 +1,7 @@
-from datetime import datetime, timedelta
-
 import requests
-from django.conf import settings
+from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.mail import send_mail
 from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.shortcuts import redirect, render
@@ -102,25 +99,11 @@ def home(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
-        message = request.POST.get('message')
+        user_message = request.POST.get('message')
 
-        if name and email and message:
-            Contact.objects.create(name=name, email=email, message=message)
+        if name and email and user_message:
+            Contact.objects.create(name=name, email=email, message=user_message)
             messages.success(request, 'Thank you! Your message has been sent.')
-
-            # new message successfully sent, send a notification to the admin
-            current_url = request.META['HTTP_REFERER']
-            subject = "New Message from {}".format(name)
-            message = (
-                f"{name} has reached out to you via the contact form "
-                f"at this website:\n{current_url}\n\n"
-                f"Message:\n{message}\n\n"
-                f"Email: {email}\n\nThanks!"
-            )
-            send_mail(
-                subject, message, email,
-                [settings.ADMIN_EMAIL], fail_silently=False
-            )
             return redirect('home')
 
     return render(request, 'home.html', {'projects': projects})
