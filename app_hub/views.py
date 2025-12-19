@@ -36,8 +36,9 @@ def track_visitor(request):
     visited[page] = now.isoformat()
     request.session['visited_pages'] = visited
 
-    # Get visitor info
-    ip = (request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0]
+    # Get visitor info (check Cloudflare header first)
+    ip = (request.META.get('HTTP_CF_CONNECTING_IP')
+          or request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
           or request.META.get('REMOTE_ADDR'))
     ua_string = request.META.get('HTTP_USER_AGENT', '')[:500]
 
