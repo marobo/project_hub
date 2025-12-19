@@ -1,3 +1,4 @@
+import json
 import requests
 from datetime import datetime, timedelta
 from django.contrib import messages
@@ -77,7 +78,7 @@ def _parse_user_agent(ua_string):
 def _get_geolocation(ip):
     """Get country and city from IP using ip-api.com."""
     if ip in LOCAL_IPS:
-        return {'country': '', 'city': ''}
+        return {'country': '', 'city': '', 'latitude': None, 'longitude': None}
     try:
         resp = requests.get(f'http://ip-api.com/json/{ip}', timeout=2)
         if resp.status_code == 200:
@@ -86,10 +87,12 @@ def _get_geolocation(ip):
                 return {
                     'country': data.get('country', ''),
                     'city': data.get('city', ''),
+                    'latitude': data.get('lat'),
+                    'longitude': data.get('lon'),
                 }
     except Exception:
         pass
-    return {'country': '', 'city': ''}
+    return {'country': '', 'city': '', 'latitude': None, 'longitude': None}
 
 
 def home(request):
@@ -144,6 +147,13 @@ def visitor_stats(request):
         date=TruncDate('visited_at')
     ).values('date').annotate(count=Count('id')).order_by('date')
 
+    # Visitors with coordinates for map (last 100)
+    map_visitors = list(
+        Visitor.objects.exclude(latitude__isnull=True)
+        .exclude(longitude__isnull=True)
+        .values('city', 'country', 'latitude', 'longitude')[:100]
+    )
+
     context = {
         'active_count': active_unique.count(),
         'active_visitors': active_qs[:10],
@@ -157,5 +167,6 @@ def visitor_stats(request):
         'device_breakdown': count_by('device_type'),
         'top_countries': count_by('country', limit=10),
         'recent_visitors': Visitor.objects.all()[:20],
+        'map_visitors': json.dumps(map_visitors),
     }
     return render(request, 'visitor_stats.html', context)

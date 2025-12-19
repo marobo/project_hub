@@ -168,6 +168,12 @@
             </div>
         </div>
 
+        <!-- Visitor Map -->
+        <div class="stats-section full-width">
+            <h2>📍 Visitor Locations</h2>
+            <div id="visitor-map"></div>
+        </div>
+
         <!-- Recent Visitors -->
         <div class="stats-section full-width">
             <h2>Recent Visitors</h2>
@@ -601,6 +607,40 @@
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* Visitor Map */
+#visitor-map {
+    height: 400px;
+    border-radius: 8px;
+    z-index: 1;
+}
 </style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const map = L.map('visitor-map').setView([20, 0], 2);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const visitors = {{ map_visitors|safe }};
+    
+    visitors.forEach(v => {
+        const label = v.city && v.country 
+            ? `${v.city}, ${v.country}` 
+            : v.country || 'Unknown';
+        L.circleMarker([v.latitude, v.longitude], {
+            radius: 6,
+            fillColor: '#10b981',
+            color: '#059669',
+            weight: 2,
+            fillOpacity: 0.8
+        }).addTo(map).bindPopup(label);
+    });
+});
+</script>
 {% endblock %}
 
