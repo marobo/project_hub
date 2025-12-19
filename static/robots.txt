@@ -1,0 +1,7 @@
+# robots.txt for onorio.dev
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://onorio.dev/sitemap.xml
+
