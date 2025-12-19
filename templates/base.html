@@ -4,26 +4,66 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Personal website of Onório de Jesus - Web Developer" />
-        <meta name="keywords" content="Onório de Jesus, Web Developer, Portfolio, Website" />
+        <meta name="description" content="Onório de Jesus - Personal website" />
+        <meta name="keywords" content="Onório de Jesus, Onorio de Jesus, ICT Officer, Quality Assurance, Developer Timor-Leste" />
+        <meta name="author" content="Onório de Jesus">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="https://onorio.dev/">
 
         <!-- Open Graph -->
         <meta property="og:site_name" content="Onório de Jesus" />
-        <meta property="og:title" content="Onório de Jesus – Portfolio & Resume" />
-        <meta property="og:description" content="Welcome to my personal resume website. Explore my projects, experience, and contact information." />
+        <meta property="og:title" content="Onório de Jesus" />
+        <meta property="og:description" content="Personal website of Onório de Jesus - ICT Officer, Quality Assurance, Developer Timor-Leste" />
         <meta property="og:image" content="https://onorio.dev/static/img/onorio_dejesus.png" />
         <meta property="og:url" content="https://onorio.dev" />
         <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
 
         <!-- Twitter Card -->
         <meta name="twitter:site" content="@onoriodejesus" />
         <meta name="twitter:creator" content="@onoriodejesus" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Onório de Jesus – Portfolio & Resume" />
-        <meta name="twitter:description" content="Welcome to my personal resume website. Explore my projects, experience, and contact information." />
+        <meta name="twitter:title" content="Onório de Jesus" />
+        <meta name="twitter:description" content="Personal website of Onório de Jesus - ICT Officer, Quality Assurance, Developer Timor-Leste" />
         <meta name="twitter:image" content="https://onorio.dev/static/img/onorio_dejesus.png" />
 
-        <title>{% block title %}Onório de Jesus{% endblock %}</title>
+        <!-- Structured Data (JSON-LD) for Google -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Onório de Jesus",
+            "alternateName": ["Onorio de Jesus", "Onório de Jesus Afonso"],
+            "url": "https://onorio.dev",
+            "image": "https://onorio.dev/static/img/onorio_dejesus.png",
+            "jobTitle": "Web Developer",
+            "worksFor": {
+                "@type": "Organization",
+                "name": "Self-Employed"
+            },
+            "sameAs": [
+                "https://github.com/marobo",
+                "https://www.linkedin.com/in/onorio-de-jesus-afonso-984878141/",
+                "https://x.com/AfonsoOnorio",
+                "https://www.facebook.com/onorio.dejesus.afonso"
+            ]
+        }
+        </script>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Onório de Jesus",
+            "url": "https://onorio.dev",
+            "description": "Personal website of Onório de Jesus - ICT Officer, Quality Assurance, Developer Timor-Leste",
+            "author": {
+                "@type": "Person",
+                "name": "Onório de Jesus"
+            }
+        }
+        </script>
+
+        <title>{% block title %}{% endblock %}</title>
         <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
@@ -79,7 +119,7 @@
                         </svg>
                     </a>
                 </div>
-                <p class="copyright">&copy; 2025 Portfolio Website. All rights reserved.</p>
+                <p class="copyright">&copy; 2025 Onório de Jesus. All rights reserved.</p>
             </div>
         </footer>
     </body>
