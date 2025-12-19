@@ -15,6 +15,8 @@ class Visitor(models.Model):
     device_type = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     class Meta:
         ordering = ['-visited_at']

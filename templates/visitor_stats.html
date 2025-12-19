@@ -6,8 +6,8 @@
 <section class="stats-page">
     <div class="container">
         <div class="stats-header">
+            <a href="{% url 'home' %}" class="btn btn-secondary">← Back</a>
             <h1>Visitor Statistics</h1>
-            <a href="{% url 'home' %}" class="btn btn-secondary">← Back to Home</a>
         </div>
 
         <!-- Stats Cards -->
@@ -154,7 +154,7 @@
         </div>
 
         <!-- Countries Section -->
-        <div class="stats-section">
+        <div class="stats-section full-width mb-4">
             <h2>🌍 Top Countries</h2>
             <div class="countries-grid">
                 {% for country in top_countries %}
@@ -168,8 +168,14 @@
             </div>
         </div>
 
+        <!-- Visitor Map -->
+        <div class="stats-section full-width mb-4">
+            <h2>📍 Visitor Locations</h2>
+            <div id="visitor-map"></div>
+        </div>
+
         <!-- Recent Visitors -->
-        <div class="stats-section full-width">
+        <div class="stats-section full-width mb-4">
             <h2>Recent Visitors</h2>
             <div class="table-container">
                 <table class="stats-table">
@@ -216,14 +222,17 @@
 </section>
 
 <style>
+.mb-4 {
+    margin-bottom: 32px;
+}
+
 .stats-page {
-    padding: 60px 0;
+    padding: 36px 0;
     min-height: calc(100vh - 200px);
 }
 
 .stats-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
     flex-wrap: wrap;
@@ -601,6 +610,40 @@
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* Visitor Map */
+#visitor-map {
+    height: 400px;
+    border-radius: 8px;
+    z-index: 1;
+}
 </style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const map = L.map('visitor-map').setView([20, 0], 2);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const visitors = {{ map_visitors|safe }};
+    
+    visitors.forEach(v => {
+        const label = v.city && v.country 
+            ? `${v.city}, ${v.country}` 
+            : v.country || 'Unknown';
+        L.circleMarker([v.latitude, v.longitude], {
+            radius: 6,
+            fillColor: '#10b981',
+            color: '#059669',
+            weight: 2,
+            fillOpacity: 0.8
+        }).addTo(map).bindPopup(label);
+    });
+});
+</script>
 {% endblock %}
 
