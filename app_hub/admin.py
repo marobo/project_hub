@@ -1,11 +1,11 @@
 import os
 from django.contrib import admin
-from .models import Project, Contact
+from .models import Project, Contact, Visitor
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
+    list_display = ['order', 'title', 'created_at']
     search_fields = ['title', 'description']
 
     def save_model(self, request, obj, form, change):
@@ -42,3 +42,15 @@ class ContactAdmin(admin.ModelAdmin):
     list_display = ['name', 'email', 'created_at']
     search_fields = ['name', 'email']
     readonly_fields = ['name', 'email', 'message', 'created_at']
+
+
+@admin.register(Visitor)
+class VisitorAdmin(admin.ModelAdmin):
+    list_display = ['ip_address', 'country', 'city', 'device_type', 'browser', 'visited_at']
+    list_filter = ['visited_at', 'device_type', 'country']
+    search_fields = ['ip_address', 'country', 'city']
+    readonly_fields = [
+        'ip_address', 'user_agent', 'visited_at',
+        'browser', 'operating_system', 'device_type', 'country', 'city'
+    ]
+    date_hierarchy = 'visited_at'
