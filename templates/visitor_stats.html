@@ -6,8 +6,8 @@
 <section class="stats-page">
     <div class="container">
         <div class="stats-header">
+            <a href="{% url 'home' %}" class="btn btn-secondary">← Back</a>
             <h1>Visitor Statistics</h1>
-            <a href="{% url 'home' %}" class="btn btn-secondary">← Back to Home</a>
         </div>
 
         <!-- Stats Cards -->
@@ -154,7 +154,7 @@
         </div>
 
         <!-- Countries Section -->
-        <div class="stats-section">
+        <div class="stats-section full-width mb-4">
             <h2>🌍 Top Countries</h2>
             <div class="countries-grid">
                 {% for country in top_countries %}
@@ -169,13 +169,13 @@
         </div>
 
         <!-- Visitor Map -->
-        <div class="stats-section full-width">
+        <div class="stats-section full-width mb-4">
             <h2>📍 Visitor Locations</h2>
             <div id="visitor-map"></div>
         </div>
 
         <!-- Recent Visitors -->
-        <div class="stats-section full-width">
+        <div class="stats-section full-width mb-4">
             <h2>Recent Visitors</h2>
             <div class="table-container">
                 <table class="stats-table">
@@ -222,14 +222,17 @@
 </section>
 
 <style>
+.mb-4 {
+    margin-bottom: 32px;
+}
+
 .stats-page {
-    padding: 60px 0;
+    padding: 36px 0;
     min-height: calc(100vh - 200px);
 }
 
 .stats-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
     flex-wrap: wrap;
