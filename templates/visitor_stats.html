@@ -745,10 +745,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     let lat = v.latitude;
                     let lng = v.longitude;
                     
-                    // Apply spiral offset if multiple visitors at same location
+                    // Apply small circular offset if multiple visitors at same location
                     if (count > 1) {
                         const angle = (index / count) * 2 * Math.PI;
-                        const radius = 0.02 + (index * 0.008); // Spiral outward
+                        const radius = 0.002 + (index * 0.001); // Small offset (~200-300m)
                         lat += radius * Math.cos(angle);
                         lng += radius * Math.sin(angle);
                     }
