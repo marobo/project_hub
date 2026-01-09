@@ -728,21 +728,46 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create bounds for all visitors in this country
             const bounds = L.latLngBounds();
             
+            // Group visitors by location to handle overlapping markers
+            const locationGroups = {};
             data.visitors.forEach(v => {
-                const label = v.city && v.country 
-                    ? `<strong>${v.city}</strong>, ${v.country}` 
-                    : v.country || 'Unknown';
-                
-                const visitorMarker = L.circleMarker([v.latitude, v.longitude], {
-                    radius: 8,
-                    fillColor: '#3b82f6',
-                    color: '#1d4ed8',
-                    weight: 2,
-                    fillOpacity: 0.9
-                }).bindPopup(label);
-                
-                visitorsLayer.addLayer(visitorMarker);
-                bounds.extend([v.latitude, v.longitude]);
+                const key = `${v.latitude.toFixed(4)},${v.longitude.toFixed(4)}`;
+                if (!locationGroups[key]) {
+                    locationGroups[key] = [];
+                }
+                locationGroups[key].push(v);
+            });
+            
+            // Create markers with spiral offset for overlapping locations
+            Object.values(locationGroups).forEach(group => {
+                const count = group.length;
+                group.forEach((v, index) => {
+                    let lat = v.latitude;
+                    let lng = v.longitude;
+                    
+                    // Apply spiral offset if multiple visitors at same location
+                    if (count > 1) {
+                        const angle = (index / count) * 2 * Math.PI;
+                        const radius = 0.02 + (index * 0.008); // Spiral outward
+                        lat += radius * Math.cos(angle);
+                        lng += radius * Math.sin(angle);
+                    }
+                    
+                    const label = v.city && v.country 
+                        ? `<strong>${v.city}</strong>, ${v.country}` 
+                        : v.country || 'Unknown';
+                    
+                    const visitorMarker = L.circleMarker([lat, lng], {
+                        radius: 8,
+                        fillColor: '#3b82f6',
+                        color: '#1d4ed8',
+                        weight: 2,
+                        fillOpacity: 0.9
+                    }).bindPopup(label);
+                    
+                    visitorsLayer.addLayer(visitorMarker);
+                    bounds.extend([lat, lng]);
+                });
             });
             
             // Hide country layer, show visitors
