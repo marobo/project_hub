@@ -2,7 +2,6 @@ import json
 import requests
 from datetime import datetime, timedelta
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.shortcuts import redirect, render
@@ -122,7 +121,6 @@ def home(request):
     return render(request, 'home.html', {'projects': projects})
 
 
-@staff_member_required
 def visitor_stats(request):
     """Dashboard for viewing visitor statistics."""
     now = timezone.now()
