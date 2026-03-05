@@ -171,7 +171,7 @@
         <!-- Visitor Map -->
         <div class="stats-section full-width mb-4">
             <h2>📍 Visitor Locations</h2>
-            <div id="visitor-map"></div>
+            <div id="visitor-map" class="maps-style"></div>
         </div>
 
         <!-- Recent Visitors -->
@@ -612,37 +612,77 @@
 }
 
 /* Visitor Map */
+.leaflet-pane {
+    z-index: 0 !important;
+}
+.maps-style {
+    border: 5px solid rgba(0,0,0,.125);
+}
 #visitor-map {
     height: 400px;
     border-radius: 8px;
     z-index: 1;
 }
+#visitor-map.maps-style {
+    border-radius: 8px;
+}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const map = L.map('visitor-map').setView([20, 0], 2);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-
     const visitors = {{ map_visitors|safe }};
-    
-    visitors.forEach(v => {
-        const label = v.city && v.country 
-            ? `${v.city}, ${v.country}` 
-            : v.country || 'Unknown';
-        L.circleMarker([v.latitude, v.longitude], {
-            radius: 6,
-            fillColor: '#10b981',
-            color: '#059669',
-            weight: 2,
-            fillOpacity: 0.8
-        }).addTo(map).bindPopup(label);
+    const addressPoints = [];
+    for (let i = 0; i < visitors.length; i++) {
+        const v = visitors[i];
+        if (v.latitude != null && v.longitude != null) {
+            addressPoints.push([
+                v.latitude,
+                v.longitude,
+                v.city || '',
+                v.country || 'Unknown'
+            ]);
+        }
+    }
+
+    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        minZoom: 2,
+        maxZoom: 18,
+        attribution: '&copy; <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
+
+    const latlng = L.latLng(20, 0);
+    const map = L.map('visitor-map', {
+        center: latlng,
+        zoom: 2,
+        layers: [tiles]
+    });
+
+    function contentPopup(city, country) {
+        const location = city && country ? city + ', ' + country : country || 'Unknown';
+        return '<strong>' + (city || '—') + '</strong><br/>' + (country || '—');
+    }
+
+    const markers = L.markerClusterGroup();
+    for (let i = 0; i < addressPoints.length; i++) {
+        const a = addressPoints[i];
+        let lat = a[0];
+        let lng = a[1];
+        const city = a[2];
+        const country = a[3];
+        if (typeof lat === 'string' && lat.indexOf(',') !== -1) {
+            lat = parseFloat(lat.replace(',', '.'));
+            lng = parseFloat(lng.replace(',', '.'));
+        }
+        const marker = L.marker(new L.LatLng(lat, lng));
+        marker.bindPopup(contentPopup(city, country));
+        markers.addLayer(marker);
+    }
+    map.addLayer(markers);
 });
 </script>
 {% endblock %}
