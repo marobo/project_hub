@@ -171,7 +171,7 @@
         <!-- Visitor Map -->
         <div class="stats-section full-width mb-4">
             <h2>📍 Visitor Locations</h2>
-            <div id="visitor-map"></div>
+            <div id="visitor-map" class="maps-style"></div>
         </div>
 
         <!-- Recent Visitors -->
@@ -612,200 +612,77 @@
 }
 
 /* Visitor Map */
+.leaflet-pane {
+    z-index: 0 !important;
+}
+.maps-style {
+    border: 5px solid rgba(0,0,0,.125);
+}
 #visitor-map {
     height: 400px;
     border-radius: 8px;
     z-index: 1;
 }
-
-/* Country cluster count labels */
-.country-count-label {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    font-weight: 700;
-    font-size: 12px;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-}
-
-.country-count-label::before {
-    display: none;
-}
-
-/* Country cluster hover effect */
-.country-cluster {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-/* Back to World View button */
-.back-to-world-btn {
-    background: var(--color-surface, #fff);
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    border: 1px solid var(--color-border, #ddd);
-    transition: all 0.2s;
-}
-
-.back-to-world-btn:hover {
-    background: var(--color-primary, #10b981);
-    color: white;
+#visitor-map.maps-style {
+    border-radius: 8px;
 }
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const map = L.map('visitor-map').setView([20, 0], 2);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-
     const visitors = {{ map_visitors|safe }};
-    
-    // Layer groups
-    const countryLayer = L.layerGroup().addTo(map);
-    const visitorsLayer = L.layerGroup();
-    
-    // Aggregate visitors by country
-    const countryData = {};
-    visitors.forEach(v => {
-        const country = v.country || 'Unknown';
-        if (!countryData[country]) {
-            countryData[country] = {
-                count: 0,
-                visitors: [],
-                latSum: 0,
-                lngSum: 0,
-                country: country
-            };
+    const addressPoints = [];
+    for (let i = 0; i < visitors.length; i++) {
+        const v = visitors[i];
+        if (v.latitude != null && v.longitude != null) {
+            addressPoints.push([
+                v.latitude,
+                v.longitude,
+                v.city || '',
+                v.country || 'Unknown'
+            ]);
         }
-        countryData[country].count++;
-        countryData[country].visitors.push(v);
-        countryData[country].latSum += v.latitude;
-        countryData[country].lngSum += v.longitude;
+    }
+
+    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        minZoom: 2,
+        maxZoom: 18,
+        attribution: '&copy; <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
-    
-    // Calculate center for each country and create markers
-    Object.values(countryData).forEach(data => {
-        data.centerLat = data.latSum / data.count;
-        data.centerLng = data.lngSum / data.count;
-        
-        // Scale radius based on visitor count
-        const radius = Math.min(12 + Math.log2(data.count) * 5, 35);
-        
-        const countryMarker = L.circleMarker([data.centerLat, data.centerLng], {
-            radius: radius,
-            fillColor: '#10b981',
-            color: '#059669',
-            weight: 3,
-            fillOpacity: 0.7,
-            className: 'country-cluster'
-        });
-        
-        // Add count label as tooltip
-        countryMarker.bindTooltip(`${data.count}`, {
-            permanent: true,
-            direction: 'center',
-            className: 'country-count-label'
-        });
-        
-        // Store country data on marker for click handler
-        countryMarker.countryData = data;
-        
-        // Click handler - zoom to country and show individual visitors
-        countryMarker.on('click', function() {
-            // Clear previous visitor markers
-            visitorsLayer.clearLayers();
-            
-            // Create bounds for all visitors in this country
-            const bounds = L.latLngBounds();
-            
-            // Group visitors by location to handle overlapping markers
-            const locationGroups = {};
-            data.visitors.forEach(v => {
-                const key = `${v.latitude.toFixed(4)},${v.longitude.toFixed(4)}`;
-                if (!locationGroups[key]) {
-                    locationGroups[key] = [];
-                }
-                locationGroups[key].push(v);
-            });
-            
-            // Create markers with spiral offset for overlapping locations
-            Object.values(locationGroups).forEach(group => {
-                const count = group.length;
-                group.forEach((v, index) => {
-                    let lat = v.latitude;
-                    let lng = v.longitude;
-                    
-                    // Apply small circular offset if multiple visitors at same location
-                    if (count > 1) {
-                        const angle = (index / count) * 2 * Math.PI;
-                        const radius = 0.002 + (index * 0.001); // Small offset (~200-300m)
-                        lat += radius * Math.cos(angle);
-                        lng += radius * Math.sin(angle);
-                    }
-                    
-                    const label = v.city && v.country 
-                        ? `<strong>${v.city}</strong>, ${v.country}` 
-                        : v.country || 'Unknown';
-                    
-                    const visitorMarker = L.circleMarker([lat, lng], {
-                        radius: 8,
-                        fillColor: '#3b82f6',
-                        color: '#1d4ed8',
-                        weight: 2,
-                        fillOpacity: 0.9
-                    }).bindPopup(label);
-                    
-                    visitorsLayer.addLayer(visitorMarker);
-                    bounds.extend([lat, lng]);
-                });
-            });
-            
-            // Hide country layer, show visitors
-            map.removeLayer(countryLayer);
-            map.addLayer(visitorsLayer);
-            
-            // Zoom to fit all visitors in that country
-            map.fitBounds(bounds.pad(0.3));
-        });
-        
-        countryMarker.addTo(countryLayer);
+
+    const latlng = L.latLng(20, 0);
+    const map = L.map('visitor-map', {
+        center: latlng,
+        zoom: 2,
+        layers: [tiles]
     });
-    
-    // Back to country view when zooming out
-    map.on('zoomend', function() {
-        if (map.getZoom() <= 3 && map.hasLayer(visitorsLayer)) {
-            map.removeLayer(visitorsLayer);
-            if (!map.hasLayer(countryLayer)) {
-                map.addLayer(countryLayer);
-            }
+
+    function contentPopup(city, country) {
+        const location = city && country ? city + ', ' + country : country || 'Unknown';
+        return '<strong>' + (city || '—') + '</strong><br/>' + (country || '—');
+    }
+
+    const markers = L.markerClusterGroup();
+    for (let i = 0; i < addressPoints.length; i++) {
+        const a = addressPoints[i];
+        let lat = a[0];
+        let lng = a[1];
+        const city = a[2];
+        const country = a[3];
+        if (typeof lat === 'string' && lat.indexOf(',') !== -1) {
+            lat = parseFloat(lat.replace(',', '.'));
+            lng = parseFloat(lng.replace(',', '.'));
         }
-    });
-    
-    // Add a "Back to World View" button
-    const backButton = L.control({ position: 'topright' });
-    backButton.onAdd = function() {
-        const div = L.DomUtil.create('div', 'back-to-world-btn');
-        div.innerHTML = '🌍 World View';
-        div.onclick = function() {
-            map.removeLayer(visitorsLayer);
-            if (!map.hasLayer(countryLayer)) {
-                map.addLayer(countryLayer);
-            }
-            map.setView([20, 0], 2);
-        };
-        return div;
-    };
-    backButton.addTo(map);
+        const marker = L.marker(new L.LatLng(lat, lng));
+        marker.bindPopup(contentPopup(city, country));
+        markers.addLayer(marker);
+    }
+    map.addLayer(markers);
 });
 </script>
 {% endblock %}
