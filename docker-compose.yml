@@ -14,9 +14,37 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
+
+      # 🔒 HTTPS MAIN (only root domain)
       - "traefik.http.routers.project_hub.rule=Host(`onorio.dev`)"
       - "traefik.http.routers.project_hub.entrypoints=websecure"
       - "traefik.http.routers.project_hub.tls.certresolver=letsencrypt"
+
+      # 🌐 HTTP → HTTPS (root domain)
+      - "traefik.http.routers.project_hub_http.rule=Host(`onorio.dev`)"
+      - "traefik.http.routers.project_hub_http.entrypoints=web"
+      - "traefik.http.routers.project_hub_http.middlewares=redirect-to-https"
+
+      # 🔁 REDIRECT WWW → NON-WWW
+      - "traefik.http.routers.redirect-www.rule=Host(`www.onorio.dev`)"
+      - "traefik.http.routers.redirect-www.entrypoints=websecure"
+      - "traefik.http.routers.redirect-www.middlewares=redirect-www-to-root"
+      - "traefik.http.routers.redirect-www.tls.certresolver=letsencrypt"
+
+      # 🔁 REDIRECT WWW (HTTP)
+      - "traefik.http.routers.redirect-www-http.rule=Host(`www.onorio.dev`)"
+      - "traefik.http.routers.redirect-www-http.entrypoints=web"
+      - "traefik.http.routers.redirect-www-http.middlewares=redirect-www-to-root"
+
+      # 🔧 Middleware for redirect
+      - "traefik.http.middlewares.redirect-www-to-root.redirectregex.regex=^https?://www\\.(.*)"
+      - "traefik.http.middlewares.redirect-www-to-root.redirectregex.replacement=https://$$1"
+      - "traefik.http.middlewares.redirect-www-to-root.redirectregex.permanent=true"
+
+      # 🔧 HTTP → HTTPS middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+      # 🚀 Service
       - "traefik.http.services.project_hub.loadbalancer.server.port=8000"
 
 networks:
