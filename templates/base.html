@@ -1,33 +1,14 @@
 {% load static %}
+{% load growth %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Onório de Jesus - Personal website" />
-        <meta name="keywords" content="Onório de Jesus, Onorio de Jesus, ICT Officer, Quality Assurance, Developer Timor-Leste" />
-        <meta name="author" content="Onório de Jesus">
-        <meta name="robots" content="index, follow">
+        {% growth_meta title="Onório de Jesus - ICT Support & Quality Assurance | Catalpa International" description="Onório de Jesus - ICT Support & Quality Assurance | Catalpa International" %}
+        {% growth_analytics %}
+        {% growth_gtm %}
         <link rel="canonical" href="https://onorio.dev/">
 
-        <!-- Open Graph -->
-        <meta property="og:site_name" content="Onório de Jesus" />
-        <meta property="og:title" content="Onório de Jesus" />
-        <meta property="og:description" content="Personal website of Onório de Jesus - ICT Officer, Quality Assurance, Developer Timor-Leste" />
-        <meta property="og:image" content="https://onorio.dev/static/img/onorio_dejesus.png" />
-        <meta property="og:url" content="https://onorio.dev" />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-
-        <!-- Twitter Card -->
-        <meta name="twitter:site" content="@onoriodejesus" />
-        <meta name="twitter:creator" content="@onoriodejesus" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Onório de Jesus" />
-        <meta name="twitter:description" content="Personal website of Onório de Jesus - ICT Officer, Quality Assurance, Developer Timor-Leste" />
-        <meta name="twitter:image" content="https://onorio.dev/static/img/onorio_dejesus.png" />
-
-        <!-- Structured Data (JSON-LD) for Google -->
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -76,6 +57,7 @@
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     </head>
     <body>
+        {% growth_body %}
         <!-- Navigation -->
         <nav class="navbar">
             <div class="container nav-content">

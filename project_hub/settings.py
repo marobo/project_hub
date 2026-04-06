@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
+    'django.contrib.sites',
+    'django_growth',
     'app_hub',
 ]
 
@@ -69,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.request',
+                'django_growth.context_processors.growth',
             ],
         },
     },
@@ -76,6 +81,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project_hub.wsgi.application'
 
+
+GROWTH = {
+    "GTM_ID": config('GTM_ID'),
+    "SITE_NAME": config('SITE_NAME'),
+    "ENV": "production" if not DEBUG else "development",
+    "GOOGLE_VERIFICATION": config('GOOGLE_VERIFICATION'),
+    "SITEMAPS": {},
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

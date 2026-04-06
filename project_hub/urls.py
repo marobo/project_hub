@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app_hub.urls')),
+    path('growth/', include('django_growth.urls')),
 
     # SEO files at root for Google
     path('favicon.ico', TemplateView.as_view(
