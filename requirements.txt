@@ -1,4 +1,4 @@
-django-growth @ git+https://github.com/marobo/django_growth.git@v0.1.0
+django-growth @ git+https://github.com/marobo/django_growth.git@v0.1.2
 django>=4.2
 pillow>=10.0
 user-agents>=2.2
