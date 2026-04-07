@@ -87,6 +87,7 @@ GROWTH = {
     "ENV": "production" if not DEBUG else "development",
     "GOOGLE_VERIFICATION": config('GOOGLE_VERIFICATION'),
     "SITEMAPS": {},
+    "DEFAULT_OG_IMAGE": "https://onorio.dev/static/img/onorio_dejesus.png"
 }
 
 # Database
