@@ -2,20 +2,33 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.views.static import serve
-from django.views.generic import TemplateView
+
+
+def _root_static_document_root():
+    """Source `static/` in dev; `collectstatic` output when DEBUG is False."""
+    if settings.DEBUG:
+        return settings.STATICFILES_DIRS[0]
+    return settings.STATIC_ROOT
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app_hub.urls')),
     path('growth/', include('django_growth.urls')),
 
-    # SEO files at root for Google
-    path('favicon.ico', TemplateView.as_view(
-        template_name='img/favicon.ico', content_type='image/x-icon')),
-    path('robots.txt', TemplateView.as_view(
-        template_name='robots.txt', content_type='text/plain')),
-    path('sitemap.xml', TemplateView.as_view(
-        template_name='sitemap.xml', content_type='application/xml')),
+    # SEO files at site root (STATIC_ROOT after collectstatic in production)
+    path('favicon.ico', serve, {
+        'document_root': _root_static_document_root(),
+        'path': 'img/favicon.ico',
+    }),
+    path('robots.txt', serve, {
+        'document_root': _root_static_document_root(),
+        'path': 'robots.txt',
+    }),
+    path('sitemap.xml', serve, {
+        'document_root': _root_static_document_root(),
+        'path': 'sitemap.xml',
+    }),
 ]
 
 # Serve media files in production (bypasses DEBUG check)

@@ -86,8 +86,22 @@ GROWTH = {
     "SITE_NAME": config('SITE_NAME'),
     "ENV": "production" if not DEBUG else "development",
     "GOOGLE_VERIFICATION": config('GOOGLE_VERIFICATION'),
-    "SITEMAPS": {},
-    "DEFAULT_OG_IMAGE": "https://onorio.dev/static/img/onorio_dejesus.png"
+    "SITEMAPS": {
+        # "pages": PagesSitemap,
+        # "blog": BlogSitemap,
+    },
+    # Site-wide default for Open Graph / Twitter image when a page omits og_image:
+    "DEFAULT_OG_IMAGE": "https://onorio.dev/static/img/onorio_dejesus.png",
+    # Optional robots behavior (defaults are safe for local dev):
+    # "ROBOTS_DISALLOW_ALL": True,
+    # "ROBOTS_INCLUDE_SITEMAP": True,
+    # Optional SEO / social (all omitted or empty = tag not rendered):
+    "META_VIEWPORT": "width=device-width, initial-scale=1.0",
+    "META_KEYWORDS": "Onório de Jesus, Onorio de Jesus, ICT Officer, Quality Assurance, Developer Timor-Leste",
+    "META_AUTHOR": "Onório de Jesus",
+    "OG_LOCALE": "en_US",
+    "TWITTER_SITE": "@AfonsoOnorio",
+    "TWITTER_CREATOR": "@AfonsoOnorio",
 }
 
 # Database
