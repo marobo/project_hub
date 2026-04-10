@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'app_hub',
 ]
 
+SITE_ID = 1
+
 # Trust the X-Forwarded headers from the proxy
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
