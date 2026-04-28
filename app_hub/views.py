@@ -1,4 +1,5 @@
 import json
+import logging
 import requests
 from datetime import datetime, timedelta
 from django.contrib import messages
@@ -13,6 +14,7 @@ from .models import Contact, Project, Visitor
 
 # Private/local IPs to skip geolocation
 LOCAL_IPS = ('127.0.0.1', 'localhost', '::1')
+logger = logging.getLogger(__name__)
 
 
 def track_visitor(request):
@@ -116,13 +118,20 @@ def home(request):
 
         if name and email and user_message:
             Contact.objects.create(name=name, email=email, message=user_message)
-            messages.success(request, 'Thank you! Your message has been sent.')
-            # send a notification to the admin email
+            # Send admin notification email without breaking contact submissions.
             subject = "New message from {}".format(name)
             message = "New message from {}:\n\nEmail: {}\n\nMessage: {}\n\nThanks".format(name, email, user_message)
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [settings.ADMIN_EMAIL]
-            send_mail(subject, message, from_email, recipient_list)
+            try:
+                send_mail(subject, message, from_email, recipient_list)
+                messages.success(request, 'Thank you! Your message has been sent.')
+            except Exception:
+                logger.exception("Contact message email notification failed")
+                messages.warning(
+                    request,
+                    "Thank you! Your message was received, but email notification failed.",
+                )
             return redirect('home')
 
     return render(request, 'home.html', {'projects': projects})
