@@ -8,7 +8,7 @@ from django.db.models.functions import TruncDate
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from user_agents import parse as parse_ua
-from django.core.mail import send_mail
+from .utils.email import send_contact_email
 from django.conf import settings
 from .models import Contact, Project, Visitor
 
@@ -118,21 +118,12 @@ def home(request):
 
         if name and email and user_message:
             Contact.objects.create(name=name, email=email, message=user_message)
-            # Send admin notification email without breaking contact submissions.
-            subject = "New message from {}".format(name)
-            message = "New message from {}:\n\nEmail: {}\n\nMessage: {}\n\nThanks".format(name, email, user_message)
-            from_email = settings.EMAIL_HOST_USER
-            recipient_list = [settings.ADMIN_EMAIL]
             try:
-                send_mail(subject, message, from_email, recipient_list)
+                send_contact_email(name, email, user_message)
                 messages.success(request, 'Thank you! Your message has been sent.')
-            except Exception:
-                logger.exception("Contact message email notification failed")
-                messages.warning(
-                    request,
-                    "Thank you! Your message was received, but email notification failed.",
-                )
-            return redirect('home')
+                return redirect('home')
+            except Exception as e:
+                messages.error(request, 'Sorry, there was an error sending your message. Please try again later.')
 
     return render(request, 'home.html', {'projects': projects})
 
