@@ -7,7 +7,8 @@ from django.db.models.functions import TruncDate
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from user_agents import parse as parse_ua
-
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Contact, Project, Visitor
 
 # Private/local IPs to skip geolocation
@@ -116,6 +117,12 @@ def home(request):
         if name and email and user_message:
             Contact.objects.create(name=name, email=email, message=user_message)
             messages.success(request, 'Thank you! Your message has been sent.')
+            # send a notification to the admin email
+            subject = "New message from {}".format(name)
+            message = "New message from {}:\n\nEmail: {}\n\nMessage: {}\n\nThanks".format(name, email, user_message)
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = [settings.ADMIN_EMAIL]
+            send_mail(subject, message, from_email, recipient_list)
             return redirect('home')
 
     return render(request, 'home.html', {'projects': projects})
