@@ -1,6 +1,7 @@
 import requests
 from django.conf import settings
 
+
 def send_contact_email(name, email, message):
     html_content = f"""
     <h2>New Contact Message</h2>

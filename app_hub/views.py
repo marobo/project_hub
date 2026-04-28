@@ -9,7 +9,6 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from user_agents import parse as parse_ua
 from .utils.email import send_contact_email
-from django.conf import settings
 from .models import Contact, Project, Visitor
 
 # Private/local IPs to skip geolocation
@@ -122,8 +121,9 @@ def home(request):
                 send_contact_email(name, email, user_message)
                 messages.success(request, 'Thank you! Your message has been sent.')
                 return redirect('home')
-            except Exception as e:
+            except Exception:
                 messages.error(request, 'Sorry, there was an error sending your message. Please try again later.')
+                return redirect('home')
 
     return render(request, 'home.html', {'projects': projects})
 
