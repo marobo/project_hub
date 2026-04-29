@@ -39,8 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.sites',
     'django_growth',
+    'django_visitor_stats',
     'app_hub',
 ]
+
+VISITOR_STATS_BASE_TEMPLATE = 'base.html'
+VISITOR_STATS_HOME_URL_NAME = 'home'
 
 SITE_ID = 1
 
