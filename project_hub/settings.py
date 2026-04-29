@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.sites',
     'django_growth',
-    'django_visitor_stats',
+    'visitor_stats',
     'app_hub',
 ]
 

@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from django_visitor_stats.views import track_visitor
+from visitor_stats.views import track_visitor
 
 from .utils.email import send_contact_email
 from .models import Contact, Project
