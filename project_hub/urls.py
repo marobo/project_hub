@@ -13,6 +13,7 @@ def _root_static_document_root():
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('stats/', include('visitor_stats.urls')),
     path('', include('app_hub.urls')),
     path('growth/', include('django_growth.urls')),
 
