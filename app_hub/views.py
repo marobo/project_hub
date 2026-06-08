@@ -11,8 +11,6 @@ def home(request):
     projects = Project.objects.all()
 
     if request.method == 'POST':
-        if request.POST.get('company'):
-            return redirect('home')
 
         name = request.POST.get('name')
         email = request.POST.get('email')
