@@ -1,5 +1,5 @@
 django-growth @ git+https://github.com/marobo/django_growth.git@v0.1.5
-django-visitor-stats @ git+https://github.com/marobo/visitor_stats.git@v0.1.0
+django-visitor-stats @ git+https://github.com/marobo/visitor_stats.git@v0.2.0
 django>=4.2
 pillow>=10.0
 user-agents>=2.2
