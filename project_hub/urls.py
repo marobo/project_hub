@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.views.static import serve
+from visitor_stats.views import visitor_stats
 
 
 def _root_static_document_root():
@@ -13,7 +15,8 @@ def _root_static_document_root():
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('stats/', include('visitor_stats.urls')),
+    # Visitor IPs/geo are PII — staff only (package view has no auth of its own).
+    path('stats/', staff_member_required(visitor_stats), name='visitor_stats'),
     path('', include('app_hub.urls')),
     path('growth/', include('django_growth.urls')),
 
