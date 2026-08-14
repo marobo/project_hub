@@ -1,8 +1,19 @@
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
+@override_settings(
+    SECURE_SSL_REDIRECT=False,
+    STORAGES={
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    },
+)
 class VisitorStatsAccessTests(TestCase):
     """`/stats/` exposes visitor IPs and geolocation — must not be public."""
 
