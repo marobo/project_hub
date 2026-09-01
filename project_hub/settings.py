@@ -106,8 +106,8 @@ GROWTH = {
     "META_KEYWORDS": "Onório de Jesus, Onorio de Jesus, ICT Officer, Quality Assurance, Developer Timor-Leste",
     "META_AUTHOR": "Onório de Jesus",
     "OG_LOCALE": "en_US",
-    "TWITTER_SITE": "@AfonsoOnorio",
-    "TWITTER_CREATOR": "@AfonsoOnorio",
+    "TWITTER_SITE": "@onorio_dja",
+    "TWITTER_CREATOR": "@onorio_dja",
 }
 
 # Database
