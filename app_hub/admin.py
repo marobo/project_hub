@@ -39,7 +39,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'created_at']
+    list_display = ['name', 'email', 'message', 'created_at']
     search_fields = ['name', 'email']
     readonly_fields = ['name', 'email', 'message', 'created_at']
 
