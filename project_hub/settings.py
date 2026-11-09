@@ -110,6 +110,8 @@ GROWTH = {
     "TWITTER_CREATOR": "@onorio_dja",
 }
 
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
